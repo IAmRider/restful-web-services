@@ -2,10 +2,17 @@ package com.practice.restfulwebservices.entity;
 
 import java.util.Date;
 
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Size;
+
 public class User {
 
 	private int id;
+
+	@Size(min = 3, message = "name should be greater than 2 letters")
 	private String name;
+
+	@Past(message = "you have entered invalid birthdate")
 	private Date birthdate;
 
 	public User(int id, String name, Date birthdate) {

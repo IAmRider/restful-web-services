@@ -2,6 +2,7 @@ package com.practice.restfulwebservices.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -21,6 +22,7 @@ public class UserDaoService {
 	}
 
 	public List<User> findAll() {
+
 		return userList;
 	}
 
@@ -33,7 +35,29 @@ public class UserDaoService {
 	}
 
 	public User findOne(int id) {
-		return userList.stream().filter(user -> user.getId() == id).findAny().get();
+
+		for (User user : userList) {
+			if (user.getId() == id)
+				return user;
+		}
+
+		return null;
 	}
+
+	public User deleteById(int id) {
+
+		Iterator<User> itr = userList.iterator();
+
+		while (itr.hasNext()) {
+			User user = itr.next();
+			if (user.getId() == id) {
+				itr.remove();
+				return user;
+			}
+		}
+		
+		return null;
+	}
+
 
 }
