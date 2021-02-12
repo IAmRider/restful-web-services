@@ -2,10 +2,14 @@ package com.practice.restfulwebservices.restcontroller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.practice.restfulwebservices.UserModelAssembler;
 import com.practice.restfulwebservices.entity.User;
 import com.practice.restfulwebservices.exception.UserNotFoundException;
 import com.practice.restfulwebservices.service.UserDaoService;
@@ -22,24 +27,52 @@ import com.practice.restfulwebservices.service.UserDaoService;
 @RestController
 public class UserResource {
 
-	@Autowired
 	private UserDaoService userDaoService;
+
+	private UserModelAssembler userModelAssembler;
+
+	public UserResource(UserDaoService userDaoService, UserModelAssembler userModelAssembler) {
+		this.userDaoService = userDaoService;
+		this.userModelAssembler = userModelAssembler;
+
+	}
 
 	// retrieveAllUsers
 
 	@GetMapping("/users")
-	public List<User> retrieveAllUser() {
-		return userDaoService.findAll();
+	public CollectionModel<EntityModel<User>> retrieveAllUser() {
+
+		/*
+		 * List<EntityModel<User>> users = userDaoService.findAll().stream() .map(user
+		 * -> EntityModel.of(user,
+		 * WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).
+		 * retrieveUser(user.getId())) .withSelfRel(),
+		 * WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).
+		 * retrieveAllUser()) .withRel("users"))) .collect(Collectors.toList());
+		 */
+
+		List<EntityModel<User>> users = userDaoService.findAll().stream().map(userModelAssembler::toModel)
+				.collect(Collectors.toList());
+
+		return CollectionModel.of(users, linkTo(methodOn(this.getClass()).retrieveAllUser()).withSelfRel());
+
 	}
 
 	@GetMapping("/users/{id}")
-	public User retrieveUser(@PathVariable int id) {
-		User user = userDaoService.findOne(id);
+	public EntityModel<User> retrieveUser(@PathVariable int id) {
 
-		if (user == null)
-			throw new UserNotFoundException(String.valueOf(id));
+		User user = Optional.ofNullable(userDaoService.findOne(id))
+				.orElseThrow(() -> new UserNotFoundException(String.valueOf(id)));
 
-		return user;
+		/*
+		 * return EntityModel.of(user,
+		 * WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).
+		 * retrieveUser(id)).withSelfRel(),
+		 * WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).
+		 * retrieveAllUser()) .withRel("users"));
+		 */
+		return userModelAssembler.toModel(user);
+
 	}
 
 	@PostMapping("/users")
@@ -54,9 +87,10 @@ public class UserResource {
 
 	@DeleteMapping("/users/{id}")
 	public void deleteById(@PathVariable int id) {
-		User user = userDaoService.deleteById(id);
-		if (user == null)
-			throw new UserNotFoundException(String.valueOf(id));
+
+		Optional.ofNullable(userDaoService.deleteById(id))
+				.orElseThrow(() -> new UserNotFoundException(String.valueOf(id)));
+
 	}
 
 }
