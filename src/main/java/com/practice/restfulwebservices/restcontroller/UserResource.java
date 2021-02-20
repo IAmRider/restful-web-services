@@ -24,7 +24,10 @@ import com.practice.restfulwebservices.entity.User;
 import com.practice.restfulwebservices.exception.UserNotFoundException;
 import com.practice.restfulwebservices.service.UserDaoService;
 
+import io.swagger.annotations.Api;
+
 @RestController
+@Api("restful-web-services")
 public class UserResource {
 
 	private UserDaoService userDaoService;

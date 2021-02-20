@@ -5,14 +5,21 @@ import java.util.Date;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(description = "User Resource Details")
+
 public class User {
 
 	private int id;
 
 	@Size(min = 3, message = "name should be greater than 2 letters")
+	@ApiModelProperty(notes = "name should be greater than 2 letters")
 	private String name;
 
 	@Past(message = "you have entered invalid birthdate")
+	@ApiModelProperty(notes = "birth date should be in past")
 	private Date birthdate;
 
 	public User(int id, String name, Date birthdate) {
