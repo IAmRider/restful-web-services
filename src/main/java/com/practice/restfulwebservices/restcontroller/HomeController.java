@@ -14,7 +14,7 @@ public class HomeController {
 
 	@GetMapping("/")
 	public ResponseEntity<String> welcomeToSystem() {
-		return new ResponseEntity<>("Welcome suraj", HttpStatus.OK);
+		return new ResponseEntity<>("Welcome suraj in sprint boot rest api project", HttpStatus.OK);
 	}
 
 	@GetMapping("/employee/{age}")
@@ -24,14 +24,11 @@ public class HomeController {
 		cookie.setComment("for confirmation that user sent same age");
 		cookie.setMaxAge(200);
 		// cookie.setSecure(true);
-		cookie.setHttpOnly(true);	
+		cookie.setHttpOnly(true);
 		response.addCookie(cookie);
 
-		
-		if (age > 27)
-			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Age not accepted for this position");
-		else
-			return ResponseEntity.ok("age is accepted!");
+		return age > 27 ? ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Age not accepted for this position")
+				: ResponseEntity.ok("age is accepted!");
 
 	}
 
