@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HomeController {
+	
+	private final int CRITERIA_AGE=27;
 
 	@GetMapping("/")
 	public ResponseEntity<String> welcomeToSystem() {
@@ -27,7 +29,7 @@ public class HomeController {
 		cookie.setHttpOnly(true);
 		response.addCookie(cookie);
 
-		return age > 27 ? ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Age not accepted for this position")
+		return age > CRITERIA_AGE ? ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Age not accepted for this position")
 				: ResponseEntity.ok("age is accepted!");
 
 	}
