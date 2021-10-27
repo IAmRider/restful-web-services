@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.jboss.logging.Logger;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
@@ -31,7 +32,8 @@ import io.swagger.annotations.Api;
 public class UserResource {
 
 	private UserDaoService userDaoService;
-
+	private Logger logger=Logger.getLogger(UserResource.class);
+	
 	private UserModelAssembler userModelAssembler;
 
 	public UserResource(UserDaoService userDaoService, UserModelAssembler userModelAssembler) {
@@ -44,6 +46,8 @@ public class UserResource {
 
 	@GetMapping("/users")
 	public CollectionModel<EntityModel<User>> retrieveAllUser() {
+		
+		logger.trace("get all users using this endpoint");
 
 		/*
 		 * List<EntityModel<User>> users = userDaoService.findAll().stream() .map(user
