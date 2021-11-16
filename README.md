@@ -1,8 +1,8 @@
 # restful-web-services
-Pure RestFul api project with hateos and swagger implementation
+First spring boot-rest application.
 
-'''
-hello welcome in java application
-'''
+> Web service
 
-some people from my company still thinks that i am form qa teams
+``` 
+cd restful-web-service
+```
